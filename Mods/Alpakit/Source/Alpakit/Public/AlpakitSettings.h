@@ -74,6 +74,13 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = "Advanced Settings")
 	TArray<FString> OverrideBuildTargets;
 
+	// MODDING EDIT: When set, the AutomationTool is invoked with this .uproject path instead of the path this editor
+	// was launched with. Needed when the project is reachable via a long path that trips the Windows MAX_PATH limit
+	// in the wine MSVC tools (lib.exe LNK1104); point this at a short symlink to the same project
+	// (e.g. /home/rebec/sm/FactoryGame.uproject). Left empty = default behavior.
+	UPROPERTY(EditAnywhere, config, Category = "Advanced Settings", meta = (ToolTip = "When set, the AutomationTool is invoked with this .uproject path instead of the path this editor was launched with. Needed when the project is also reachable via a long path that trips the Windows MAX_PATH limit in the wine MSVC tools (lib.exe LNK1104); point this at a short symlink to the same project. Left empty = default behavior."))
+	FFilePath OverrideUATProjectPath;
+
     UPROPERTY(BlueprintReadOnly, config, Category = Config)
     TMap<FString, bool> ModSelection;
 

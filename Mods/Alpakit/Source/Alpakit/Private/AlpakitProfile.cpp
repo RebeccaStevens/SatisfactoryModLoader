@@ -66,9 +66,17 @@ FString FAlpakitProfile::MakeUATPlatformArgs() {
 }
 
 FString FAlpakitProfile::MakeUATCommandLine() {
-	const FString ProjectPath = FPaths::IsProjectFilePathSet()
+	FString ProjectPath = FPaths::IsProjectFilePathSet()
 		? FPaths::ConvertRelativePathToFull(FPaths::GetProjectFilePath())
 		: FPaths::RootDir() / FApp::GetProjectName() / FApp::GetProjectName() + TEXT(".uproject");
+
+	// MODDING EDIT: allow the AutomationTool project path to be overridden from Alpakit settings
+	// (short symlink path to work around wine MSVC MAX_PATH failures when the editor is launched via a long path).
+	const FString& UATProjectPathOverride = UAlpakitSettings::Get()->OverrideUATProjectPath.FilePath;
+	if (!UATProjectPathOverride.IsEmpty() && FPaths::FileExists(UATProjectPathOverride))
+	{
+		ProjectPath = FPaths::ConvertRelativePathToFull(UATProjectPathOverride);
+	}
 	
 	FString CommandLine = FString::Printf(TEXT("-ScriptsForProject=\"%s\" PackagePlugin -project=\"%s\" -clientconfig=%s -serverconfig=%s -utf8output -DLCName=%s"),
 			*ProjectPath,
